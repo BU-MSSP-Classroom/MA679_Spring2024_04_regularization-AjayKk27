@@ -162,8 +162,9 @@ In this exercise, we will generate simulated data, and will then use this data t
 
 Your code:
 ```{r,echo=TRUE}
-#
-#
+set.seed(211)
+x<- rnorm(100)
+e<-rnorm(100)
 ```
 
 
@@ -172,7 +173,7 @@ Your code:
 Your code:
 ```{r,echo=TRUE}
 #
-#
+y=x+2*x^2+3*x^3+e
 ```
 
 
@@ -180,11 +181,40 @@ Your code:
 
 Your code:
 ```{r,echo=TRUE}
-#
-#
+library(leaps)
+dataset<- data.frame(x,x^2, x^3, x^4, x^5, x^6, x^7, x^8, x^9, x^10,y)
+best<-regsubsets(x=dataset[,1:10], y=dataset[,11])
+summary(best)
 ```
 
 Your answer:
+Now that we've run the subset selection, lets review C_p, BIC and adjusted R^2:
+
+```{r}
+#C_p:
+print("C_p:")
+summary(best)$cp
+
+#graphing this:
+cp<-data.frame(1:8,summary(best)$cp)
+colnames(cp)<-c("ModelNumber", "Cp")
+ggplot(data=cp,  aes(x=ModelNumber, y=Cp))+geom_bar(stat='identity')
+
+#So we can get rid of models 1 and 2 because their Cp is significantly larger than K+1, where K is the number of parameters in the model. What about the rest of them?
+
+#BIC
+print("BIC:")
+summary(best)$bic
+
+#Here Model 3 has the best BIC but the BIC for models 3 to 8 are not too different. 
+
+#Adj R^2
+print("Adjusted R-Squared:")
+summary(best)$adjr2
+
+#Looking at the Adjusted R Squared, we again get that model 3 explains the most variance.
+
+```
 
 ~~~
 Please write your answer in full sentences.
