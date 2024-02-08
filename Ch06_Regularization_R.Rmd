@@ -94,16 +94,22 @@ Your code:
 #Starting with lasso and using cross validation to choose the hyper parameter
 library(glmnet)
 x<- data.matrix(ames_raw_2008[,c(14,19,48)])
-y<-ames_raw_2008$SalePrice
+y<-log(ames_raw_2008$SalePrice)
 cross_validated<-cv.glmnet(x,y, alpha=1)
 lambda<-cross_validated$lambda.min
+print("Lambda:")
 lambda
 plot(cross_validated)
 
 lasso_model<- glmnet(x,y,alpha=1, lambda = lambda)
 
 #Using the lasso model to predict:
+newx<- data.matrix(ames_raw_2009[,c(14,19,48)])
+lasso_predicted<- predict(lasso_model, newx = newx)
 
+lasso_loss<-calc_loss(exp(lasso_predicted), ames_raw_2009$SalePrice)
+print("Lasso Loss")
+lasso_loss
 #
 ```
 
