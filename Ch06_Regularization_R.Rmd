@@ -93,10 +93,16 @@ Your code:
 ```{r,echo=TRUE}
 #Starting with lasso and using cross validation to choose the hyper parameter
 library(glmnet)
-x<- data.matrix(ames_raw_2008[,c(`Overall Qual`, Neighborhood, `Gr Liv Area`)])
+x<- data.matrix(ames_raw_2008[,c(14,19,48)])
 y<-ames_raw_2008$SalePrice
 cross_validated<-cv.glmnet(x,y, alpha=1)
 lambda<-cross_validated$lambda.min
+lambda
+plot(cross_validated)
+
+lasso_model<- glmnet(x,y,alpha=1, lambda = lambda)
+
+#Using the lasso model to predict:
 
 #
 ```
