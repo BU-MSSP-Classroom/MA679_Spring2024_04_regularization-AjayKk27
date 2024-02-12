@@ -368,7 +368,7 @@ print("Lambda:")
 lambda_ridge
 plot(cross_validated)
 
-ridge_model<- glmnet(x,y,alpha=0, lambda = lambda)
+ridge_model<- glmnet(x,y,alpha=0, lambda = lambda_ridge)
 summary(ridge_model)
 
 #Test error in MSE:
@@ -393,7 +393,24 @@ Please write your answer in full sentences.
 Your code:
 ```{r,echo=TRUE}
 #
-#
+library(glmnet)
+x<- data.matrix(training_data[,c(1,16,17)])
+y<- training_data[,2]
+cross_validated_lasso<-cv.glmnet(x=x,y, alpha=1)
+lambda_lasso<-cross_validated$lambda.min
+print("Lambda:")
+lambda_lasso
+plot(cross_validated)
+
+lasso_model<- glmnet(x,y,alpha=1, lambda = lambda_lasso)
+summary(lasso_model)
+
+#Test error in MSE:
+
+prediction_lasso<- predict(lasso_model,newx=data.matrix(test_data[,c(1,16,17)]))
+
+test_error<- mean((test_data$Apps-prediction_lasso)^2)
+sqrt(test_error)
 ```
 
 Your answer:
