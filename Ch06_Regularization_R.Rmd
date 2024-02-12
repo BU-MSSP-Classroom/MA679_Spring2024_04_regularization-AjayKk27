@@ -115,36 +115,13 @@ lasso_loss
 Using best subset:
 ```{r}
 library(leaps)
-best<-regsubsets(x=as.matrix(ames_raw_2008[,c(14,19,48)), y=ames_raw_2008$SalePrice)
+best<-regsubsets(x=as.matrix(ames_raw_2008[,c(14,19,48)]), y=ames_raw_2008$SalePrice)
 summary(best)
 ```
 
-Your answer:
-Now that we've run the subset selection, lets review C_p, BIC and adjusted R^2:
 
 ```{r}
-#C_p:
-print("C_p:")
-summary(best)$cp
 
-#graphing this:
-cp<-data.frame(1:8,summary(best)$cp)
-colnames(cp)<-c("ModelNumber", "Cp")
-ggplot(data=cp,  aes(x=ModelNumber, y=Cp))+geom_bar(stat='identity')
-
-#So we can get rid of models 1 and 2 because their Cp is significantly larger than K+1, where K is the number of parameters in the model. What about the rest of them?
-
-#BIC
-print("BIC:")
-summary(best)$bic
-
-#Here Model 3 has the best BIC but the BIC for models 3 to 8 are not too different. 
-
-#Adj R^2
-print("Adjusted R-Squared:")
-summary(best)$adjr2
-
-#Looking at the Adjusted R Squared, we again get that model 3 explains the most variance.
 ```
 
 
@@ -298,6 +275,16 @@ Your code:
 ```{r,echo=TRUE}
 #
 #
+library(glmnet)
+dataset<-as.matrix(dataset)
+cross_validated<-cv.glmnet(x=dataset,y, alpha=1)
+lambda<-cross_validated$lambda.min
+print("Lambda:")
+lambda
+plot(cross_validated)
+
+lasso_model<- glmnet(dataset,y,alpha=1, lambda = lambda)
+summary(lasso_model)
 ```
 
 Your answer:
@@ -314,6 +301,7 @@ Your code:
 ```{r,echo=TRUE}
 #
 #
+
 ```
 
 Your answer:
@@ -337,7 +325,10 @@ data(College,package = "ISLR2")
 Your code:
 ```{r,echo=TRUE}
 #
-#
+#So we'll use a 70-30 split for training vs test:
+sample_row_vec<- sample(1:777,543,replace=F)
+training_data<- College[sample_row_vec,]
+test_data<- College[-sample_row_vec,]
 ```
 
 (b) Fit a linear model using least squares on the training set, and report the test error obtained.
