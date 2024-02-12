@@ -336,7 +336,13 @@ test_data<- College[-sample_row_vec,]
 Your code:
 ```{r,echo=TRUE}
 #
-#
+college_fit_linear<- lm(Apps~perc.alumni+Private+Expend,data=training_data)
+summary(college_fit_linear)
+
+prediction_linear<- predict(college_fit_linear,newdata=test_data)
+
+test_error<- mean((test_data$Apps-prediction_linear)^2)
+sqrt(test_error)
 ```
 
 Your answer:
@@ -353,7 +359,25 @@ Please write your answer in full sentences.
 Your code:
 ```{r,echo=TRUE}
 #
-#
+library(glmnet)
+x<- data.matrix(training_data[,c(1,16,17)])
+y<- training_data[,2]
+cross_validated_ridge<-cv.glmnet(x=x,y, alpha=0)
+lambda_ridge<-cross_validated$lambda.min
+print("Lambda:")
+lambda_ridge
+plot(cross_validated)
+
+ridge_model<- glmnet(x,y,alpha=0, lambda = lambda)
+summary(ridge_model)
+
+#Test error in MSE:
+
+prediction_ridge<- predict(ridge_model,newx=data.matrix(test_data[,c(1,16,17)]))
+
+test_error<- mean((test_data$Apps-prediction_ridge)^2)
+sqrt(test_error)
+
 ```
 
 Your answer:
